@@ -13,7 +13,7 @@ namespace Admin.Models.Entities
     public class Invoice:BaseEntity2<long,Guid>
     {
         [DisplayName("Birim")]
-        public double Quantity { get; set; }
+        public decimal Quantity { get; set; }
 
         [DisplayName("Fiyat")]
         public decimal Price { get; set; }
