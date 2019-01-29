@@ -47,6 +47,12 @@ namespace Admin.Models.Entities
         [Index(IsUnique = true)]
         public string Barcode { get; set; }
 
+        [DisplayName("Birim")]
+        public int Quantity { get; set; }
+
+        [DisplayName("Açıklama")]
+        public string Description { get; set; }
+
 
 
 
