@@ -8,17 +8,17 @@ using System.Threading.Tasks;
 
 namespace Admin.DAL
 {
-    class MyContext : DbContext
+    public class MyContext : DbContext
     {
         public MyContext():base("name=MyCon")
         {
-
+            this.InstanceDate = DateTime.Now;
         }
-
+        public DateTime InstanceDate { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Category>().Property(x => x.TaxRate).HasPrecision(3, 2);
+            modelBuilder.Entity<Category>().Property(x => x.TaxRate).HasPrecision(4, 2);
             modelBuilder.Entity<Product>().Property(x => x.SalesPrice).HasPrecision(7, 2);
             modelBuilder.Entity<Product>().Property(x => x.BuyPrice).HasPrecision(7, 2);
             modelBuilder.Entity<Invoice>().Property(x => x.Quantity).HasPrecision(8, 4);
