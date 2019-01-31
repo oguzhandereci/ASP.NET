@@ -1,0 +1,109 @@
+﻿@model Product
+@{
+    ViewBag.Title = "Add";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+
+<div class="row">
+    <div class="card">
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert alert-success">
+                <p><strong>Başarılı</strong>  @TempData["Message"]</p>
+            </div>
+        }
+        <div class="card-header">
+            <h4>Ürün Ekleme Formu</h4>
+            <div class="text text-danger">@Html.ValidationSummary()</div>
+            <ul class="card-actions">
+                <li>
+                    <button type="button"><i class="ion-more"></i></button>
+                </li>
+            </ul>
+        </div>
+        <div class="card-block">
+            @using (Html.BeginForm("Add", "Product", FormMethod.Post, new { @class = "form-horizontal" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Barcode, new { @class = "col-md-3 control-label" })
+                    <div class="col-md-7">
+                        @Html.TextBoxFor(x => x.Barcode, new { @class = "form-control", placeholder = "Ürün Barkod" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(x => x.ProductName, new { @class = "col-md-3 control-label" })
+                    <div class="col-md-7">
+                        @Html.TextBoxFor(x => x.ProductName, new { @class = "form-control", placeholder = "Ürün Adı" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(x => x.ProductType, new { @class = "col-md-3 control-label" })
+                    <div class="col-md-7">
+                        @Html.EnumDropDownListFor(x => x.ProductType, "Ürün Tipi", new { @class = "form-control" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(x => x.CategoryID, new { @class = "col-md-3 control-label" })
+                    <div class="col-md-7">
+                        @Html.DropDownListFor(x => x.CategoryID, (List<SelectListItem>)ViewBag.CategoryList,
+          new { @class = "form-control", size = "1" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(x => x.SupProductID, new { @class = "col-md-3 control-label" })
+                    <div class="col-md-7">
+                        @Html.DropDownListFor(x => x.SupProductID, (List<SelectListItem>)ViewBag.ProductList,
+          new { @class = "form-control", size = "1" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(x => x.SalesPrice, new { @class = "col-md-3 control-label" })
+                    <div class="col-md-7">
+                        @Html.TextBoxFor(x => x.SalesPrice, new { @class = "form-control", placeholder = "Satış Fiyatı", type = "number", step = "1" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(x => x.BuyPrice, new { @class = "col-md-3 control-label" })
+                    <div class="col-md-7">
+                        @Html.TextBoxFor(x => x.BuyPrice, new { @class = "form-control", placeholder = "Alış Fiyatı", type = "number", step = "1" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(x => x.UnitsInStock, new { @class = "col-md-3 control-label" })
+                    <div class="col-md-7">
+                        @Html.TextBoxFor(x => x.UnitsInStock, new { @class = "form-control", placeholder = "Stok", type = "number", step = "1" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Quantity, new { @class = "col-md-3 control-label" })
+                    <div class="col-md-7">
+                        @Html.TextBoxFor(x => x.Quantity, new { @class = "form-control", placeholder = "Adet", type = "number", step = "1" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Description, new { @class = "col-md-3 control-label" })
+                    <div class="col-md-7">
+                        @Html.TextBoxFor(x => x.Description, new { @class = "form-control", placeholder = "Ürün Bilgisi", type = "text", step = "1" })
+                    </div>
+                </div>
+
+                <div class="form-group m-b-0">
+                    <div class="col-md-9 col-md-offset-3">
+                        <button class="btn btn-app" type="submit">Ürün Ekle</button>
+
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+

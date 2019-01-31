@@ -76,11 +76,11 @@ namespace Admin.BLL.Repository
             DbObject.Remove(entity);
             return await DbContext.SaveChangesAsync();
         }
-        public int Update()
+        public int Save()
         {
             return DbContext.SaveChanges();
         }
-        public async Task<int> UpdateAsync()
+        public async Task<int> SaveAsync()
         {
             return await DbContext.SaveChangesAsync();
         }
@@ -89,7 +89,7 @@ namespace Admin.BLL.Repository
             DbObject.Attach(entity);
             DbContext.Entry(entity).State = EntityState.Modified;
             entity.UpdatedDate = DateTime.Now;
-            this.Update();
+            this.Save();
         }
 
         public bool IsDisposed { get; set; }
