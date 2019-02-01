@@ -91,7 +91,10 @@ namespace Admin.BLL.Repository
             entity.UpdatedDate = DateTime.Now;
             this.Save();
         }
-
+        public IQueryable<T> Queryable()
+        {
+            return DbObject;
+        }
         public bool IsDisposed { get; set; }
 
         public void Dispose()

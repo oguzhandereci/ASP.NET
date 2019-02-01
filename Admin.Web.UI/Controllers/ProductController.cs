@@ -1,12 +1,15 @@
 ﻿using Admin.BLL.Helpers;
 using Admin.BLL.Repository;
+using Admin.BLL.Services;
 using Admin.Models.Entities;
 using Admin.Models.Enums;
+using Admin.Models.Models;
 using Admin.Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -23,36 +26,40 @@ namespace Admin.Web.UI.Controllers
         [HttpGet]
         public ActionResult Add()
         {
-            ViewBag.CategoryList = GetCategorySelectList();
             ViewBag.ProductList = GetProductSelectList();
+            ViewBag.CategoryList = GetCategorySelectList();
             return View();
         }
 
-        [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Add(Product product)
+        [HttpPost]
+        public async Task<ActionResult> Add(Product model)
         {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.ProductList = GetProductSelectList();
+                ViewBag.CategoryList = GetCategorySelectList();
+                return View(model);
+            }
+
             try
             {
-                product.BuyPrice /= 100;
-                if (product.SupProductID != null)
-                {
-                    product.CategoryID = new ProductRepo().GetById(product.SupProductID).CategoryID;
-                }
-                product.LastPriceUpdatedDate = DateTime.Now;
-                new ProductRepo().Insert(product);
-                TempData["Message"] = $"{product.ProductName} isimli ürün başarıyla eklenmiştir.";
+                if (model.SupProductID.ToString().Replace("0", "").Replace("-", "").Length == 0)
+                    model.SupProductID = null;
+
+                model.LastPriceUpdatedDate = DateTime.Now;
+                await new ProductRepo().InsertAsync(model);
+                TempData["Message"] = $"{model.ProductName} isimli ürün başarıyla eklenmiştir";
                 return RedirectToAction("Add");
             }
             catch (DbEntityValidationException ex)
             {
                 TempData["Model"] = new ErrorViewModel()
                 {
-                    Text = $"Bir hata olustu : {EntityHelpers.ValidationMessage(ex)}",
+                    Text = $"Bir hata oluştu: {EntityHelpers.ValidationMessage(ex)}",
                     ActionName = "Add",
                     ControllerName = "Product",
                     ErrorCode = 500
-
                 };
                 return RedirectToAction("Error", "Home");
             }
@@ -60,13 +67,41 @@ namespace Admin.Web.UI.Controllers
             {
                 TempData["Model"] = new ErrorViewModel()
                 {
-                    Text = $"Bir hata olustu : {ex.Message}",
+                    Text = $"Bir hata oluştu: {ex.Message}",
                     ActionName = "Add",
                     ControllerName = "Product",
                     ErrorCode = 500
-
                 };
                 return RedirectToAction("Error", "Home");
+            }
+        }
+        [HttpGet]
+        public JsonResult CheckBarcode(string barcode)
+        {
+            try
+            {
+                if (new ProductRepo().Queryable().Any(x => x.Barcode == barcode))
+                {
+                    return Json(new ResponseData()
+                    {
+                        message = $"{barcode} sistemde kayıtlı",
+                        success = true
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                return Json(new ResponseData()
+                {
+                    message = $"{barcode} bilgisi servisten getirildi",
+                    success = true,
+                    data = new BarcodeService().Get(barcode)
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new ResponseData()
+                {
+                    message = $"Bir hata oluştu: {ex.Message}",
+                    success = false
+                }, JsonRequestBehavior.AllowGet);
             }
         }
     }
